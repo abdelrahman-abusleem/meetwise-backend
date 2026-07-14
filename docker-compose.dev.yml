@@ -1,0 +1,112 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: meetwise-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root123
+      POSTGRES_DB: meetwise
+    ports:
+      - '6000:5432'
+    volumes:
+      - meetwise_postgres_data:/var/lib/postgresql/data
+    networks:
+      - meetwise_internal
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d meetwise']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: meetwise-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - meetwise_redis_data:/data
+    networks:
+      - meetwise_internal
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: deployment/docker/api.dev.Dockerfile
+    container_name: meetwise-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:root123@postgres:5432/meetwise?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: 3000
+      WATCHPACK_POLLING: 'true'
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/generated
+    networks:
+      - meetwise_internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sh -c "npx prisma generate && npm run start:dev"
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3000/health/ready').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  worker:
+    build:
+      context: .
+      dockerfile: deployment/docker/worker.dev.Dockerfile
+    container_name: meetwise-worker
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:root123@postgres:5432/meetwise?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      WATCHPACK_POLLING: 'true'
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/generated
+    networks:
+      - meetwise_internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sh -c "npx prisma generate && npm run start:worker:dev"
+
+volumes:
+  meetwise_postgres_data:
+  meetwise_redis_data:
+
+networks:
+  meetwise_internal:
+    name: meetwise_internal
+    driver: bridge

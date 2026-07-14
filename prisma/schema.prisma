@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  moduleFormat        = "cjs"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model SystemSetting {
+  id              String  @id @default(uuid()) @db.Uuid
+  companyName     String  @map("company_name")
+  companyLogoUrl  String? @map("company_logo_url")
+  timezone        String  @default("UTC")
+  defaultLanguage String  @default("en") @map("default_language")
+  defaultBotName  String  @default("Meetwise Bot") @map("default_bot_name")
+
+  recordingConsentRequired Boolean @default(true) @map("recording_consent_required")
+  retentionDays            Int     @default(30) @map("retention_days")
+  autoDeleteTranscripts    Boolean @default(false) @map("auto_delete_transcripts")
+  allowAudioStorage        Boolean @default(false) @map("allow_audio_storage")
+
+  setupCompleted   Boolean   @default(false) @map("setup_completed")
+  setupCompletedAt DateTime? @map("setup_completed_at")
+  productVersion   String    @default("0.0.1") @map("product_version")
+  installationId   String    @unique @default(uuid()) @map("installation_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
+}

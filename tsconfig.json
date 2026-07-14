@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@meetwise/infrastructure/health": ["libs/infrastructure/health/src"],
+      "@meetwise/infrastructure/health/*": ["libs/infrastructure/health/src/*"],
+      "@meetwise/infrastructure/config": ["libs/infrastructure/config/src"],
+      "@meetwise/infrastructure/config/*": ["libs/infrastructure/config/src/*"],
+      "@meetwise/infrastructure/database": ["libs/infrastructure/database/src"],
+      "@meetwise/infrastructure/database/*": [
+        "libs/infrastructure/database/src/*"
+      ],
+      "@meetwise/infrastructure/queue": ["libs/infrastructure/queue/src"],
+      "@meetwise/infrastructure/queue/*": ["libs/infrastructure/queue/src/*"],
+      "@meetwise/infrastructure/redis": ["libs/infrastructure/redis/src"],
+      "@meetwise/infrastructure/redis/*": ["libs/infrastructure/redis/src/*"]
+    }
+  }
+}

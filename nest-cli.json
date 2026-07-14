@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/api/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/api/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/api",
+  "projects": {
+    "api": {
+      "type": "application",
+      "root": "apps/api",
+      "entryFile": "main",
+      "sourceRoot": "apps/api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api/tsconfig.app.json"
+      }
+    },
+  "infrastructure-health": {
+  "type": "library",
+  "root": "libs/infrastructure/health",
+  "entryFile": "index",
+  "sourceRoot": "libs/infrastructure/health/src",
+  "compilerOptions": {
+    "tsConfigPath": "libs/infrastructure/health/tsconfig.lib.json"
+                     }
+    },
+    "infrastructure-config": {
+      "type": "library",
+      "root": "libs/infrastructure/config",
+      "entryFile": "index",
+      "sourceRoot": "libs/infrastructure/config/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/infrastructure/config/tsconfig.lib.json"
+      }
+    },
+    "infrastructure-database": {
+      "type": "library",
+      "root": "libs/infrastructure/database",
+      "entryFile": "index",
+      "sourceRoot": "libs/infrastructure/database/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/infrastructure/database/tsconfig.lib.json"
+      }
+    },
+    "infrastructure-queue": {
+      "type": "library",
+      "root": "libs/infrastructure/queue",
+      "entryFile": "index",
+      "sourceRoot": "libs/infrastructure/queue/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/infrastructure/queue/tsconfig.lib.json"
+      }
+    },
+    "infrastructure-redis": {
+      "type": "library",
+      "root": "libs/infrastructure/redis",
+      "entryFile": "index",
+      "sourceRoot": "libs/infrastructure/redis/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/infrastructure/redis/tsconfig.lib.json"
+      }
+    },
+    "worker": {
+      "type": "application",
+      "root": "apps/worker",
+      "entryFile": "main",
+      "sourceRoot": "apps/worker/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/worker/tsconfig.app.json"
+      }
+    }
+  }
+}
