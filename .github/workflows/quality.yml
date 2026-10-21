@@ -64,7 +64,9 @@ jobs:
           const fs = require('node:fs');
           const crypto = require('node:crypto');
           for (const name of ['JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET', 'PASSWORD_RESET_SECRET']) {
-            fs.appendFileSync(process.env.GITHUB_ENV, `${name}=${crypto.randomBytes(48).toString('hex')}\n`);
+            const value = crypto.randomBytes(48).toString('hex');
+            console.log(`::add-mask::${value}`);
+            fs.appendFileSync(process.env.GITHUB_ENV, `${name}=${value}\n`);
           }
           NODE
       - name: Lockfile install
