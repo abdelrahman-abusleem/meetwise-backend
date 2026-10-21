@@ -1,0 +1,107 @@
+name: MeetWise quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: mw/${{ matrix.check }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [build, typecheck, lint, unit, e2e, security]
+    services:
+      postgres:
+        image: postgres@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci-disposable-${{ github.run_id }}-${{ github.run_attempt }}
+          POSTGRES_DB: meetwise_ci
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd "pg_isready -U postgres -d meetwise_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+      redis:
+        image: redis@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+        ports:
+          - 6379/tcp
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:ci-unused@127.0.0.1:1/meetwise_ci
+      PASSWORD_RESET_TTL_SECONDS: '300'
+      SMTP_HOST: 127.0.0.1
+      SMTP_PORT: '1'
+      SMTP_FROM: ci@example.invalid
+      WEB_APP_URL: http://127.0.0.1:1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Create ephemeral test signing keys
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const crypto = require('node:crypto');
+          for (const name of ['JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET', 'PASSWORD_RESET_SECRET']) {
+            fs.appendFileSync(process.env.GITHUB_ENV, `${name}=${crypto.randomBytes(48).toString('hex')}\n`);
+          }
+          NODE
+      - name: Lockfile install
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Generate Prisma client
+        run: node node_modules/prisma/build/index.js generate
+      - name: Run check
+        env:
+          MW_CHECK: ${{ matrix.check }}
+          DATABASE_URL: postgresql://postgres:ci-disposable-${{ github.run_id }}-${{ github.run_attempt }}@127.0.0.1:${{ job.services.postgres.ports[5432] }}/meetwise_ci
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: ${{ job.services.redis.ports[6379] }}
+        run: |
+          case "$MW_CHECK" in
+            build) npm run build ;;
+            typecheck)
+              node node_modules/typescript/bin/tsc -p apps/api/tsconfig.app.json --noEmit
+              node node_modules/typescript/bin/tsc -p apps/worker/tsconfig.app.json --noEmit
+              ;;
+            lint) node node_modules/eslint/bin/eslint.js 'apps/**/*.ts' 'libs/**/*.ts' --no-fix ;;
+            unit) npm test -- --runInBand --no-cache ;;
+            e2e) npm run test:e2e -- --runInBand --no-cache ;;
+            security)
+              node <<'NODE'
+          const cp = require('node:child_process');
+          const fs = require('node:fs');
+          const paths = cp.execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+          const forbiddenPath = /(^|\/)(\.env$|.*private.*\.(pem|key)$|.*\.(dump|bak|bundle)$)/i;
+          const privateKey = /-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----/;
+          const providerToken = /\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|AIza[A-Za-z0-9_-]{30,}|(?:AKIA|ASIA)[A-Z0-9]{16})\b/;
+          const findings = paths.filter(path => forbiddenPath.test(path) || privateKey.test(fs.readFileSync(path, 'utf8')) || providerToken.test(fs.readFileSync(path, 'utf8')));
+          if (findings.length) {
+            console.error('Sensitive file or credential marker found; values withheld.');
+            process.exitCode = 1;
+          }
+          NODE
+              npm audit --audit-level=high
+              ;;
+            *) exit 2 ;;
+          esac
