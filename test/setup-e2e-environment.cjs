@@ -1,5 +1,3 @@
-const path = require('node:path');
-
 function fixturePort(name) {
   const value = process.env[name];
   if (!value || !/^\d+$/.test(value))
@@ -18,8 +16,4 @@ require('./setup-test-environment.cjs');
 Object.assign(process.env, {
   DATABASE_URL: `postgresql://postgres@127.0.0.1:${postgresPort}/meetwise_e2e`,
   REDIS_PORT: String(redisPort),
-  LICENSE_PUBLIC_KEY_PATH: path.resolve(
-    __dirname,
-    '../deployment/license/license-public.pem',
-  ),
 });

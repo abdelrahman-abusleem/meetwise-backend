@@ -2,7 +2,7 @@
 
 MeetWise is a self-hosted meeting-to-action backend for a single organization. It brings meeting records, transcript provenance, structured analysis, human review and destination-specific actions into one scoped workflow.
 
-**Current status: reviewed backend source with offline validation.** This branch is a source-only publication, not a deployment or a completed end-to-end product. Database, Redis, email, live meeting capture and provider integrations have not been verified for this published snapshot.
+**Current status: backend source with offline validation.** Database, Redis, email, live meeting capture and external-provider runtime verification remain pending.
 
 ## What it solves
 
@@ -21,7 +21,7 @@ Meeting notes lose context when they become tasks or sales follow-ups. MeetWise 
 | External actions        | Destination-scoped execution identities, attempt/lease fencing and unknown-effect reconciliation policies.                                                                                |
 | Export                  | JSON/CSV rendering, private local-object storage, export request/download-audit schema sources and settled-state guards. Full source selection and authorization bindings remain pending. |
 
-These capabilities have different integration depths. Much of the meeting-to-action pipeline is library/application source rather than registered API routes or active worker consumers. See [implementation status](docs/STATUS.md).
+These capabilities have different integration depths. Much of the meeting-to-action pipeline is library/application source. API route and worker registration remain incomplete for some components.
 
 ## Technology
 
@@ -39,7 +39,7 @@ The lockfile is authoritative for dependency versions. No paid provider or hoste
 
 HTTP controllers handle transport concerns; application services coordinate use cases; domain policies hold state and authorization invariants. Infrastructure adapters implement persistence, queue, storage and provider boundaries through explicit contracts.
 
-PostgreSQL is the intended source of truth. Outbox publication and queue delivery are at least once, so consumers need durable receipts and reconciliation. Provider calls must stay outside short database transactions. See [architecture](docs/ARCHITECTURE.md).
+PostgreSQL is the intended source of truth. Outbox publication and queue delivery are at least once, so consumers need durable receipts and reconciliation. Provider calls must stay outside short database transactions. Domain and application code depend on focused ports, with NestJS providers composing the infrastructure adapters.
 
 ```text
 apps/api/          HTTP API and feature modules
@@ -63,11 +63,10 @@ Use Node.js 24 and npm. PostgreSQL and Redis are required for an actual API/work
 ```bash
 git clone https://github.com/abdelrahman-abusleem/meetwise-backend.git
 cd meetwise-backend
-git checkout codex/source-publication-20261104
 npm ci --ignore-scripts
 ```
 
-The installation command matches the repository workflow; a fresh dependency installation was not performed for this publication. Native dependencies may require platform-specific setup.
+The lockfile records dependency versions. A fresh dependency installation was not performed for this source review. Native dependencies may require platform-specific setup.
 
 Copy `.env.example` to a private local `.env` and replace every placeholder. Use separate random access-token, refresh-token and password-reset secrets. Never commit credentials, private keys or database dumps.
 
@@ -96,7 +95,9 @@ npm run build
 
 Additional strict feature typechecks are listed in `package.json`. Builds require an available compatible generated client. The schema-validation command uses a separate configuration without a datasource, environment loading or generation hooks.
 
-`npm run test:integration` and `npm run test:e2e` require explicitly prepared disposable infrastructure. They are not part of the source-only publication run and must not target production or shared data. See [development and testing](docs/DEVELOPMENT.md).
+`node --test test/infrastructure/` runs local test-runner, contract and source-tree checks. Python offline tests can be run with `python -B -m unittest discover -s scripts -p 'test_s1_quality_*.py'` and `python -B -m unittest discover -s deploy/s1 -p test_toolkit.py`.
+
+`npm run test:integration` and `npm run test:e2e` require explicitly authorized disposable PostgreSQL/Redis fixtures. They remain pending for this source snapshot. GitHub Actions verification also remains pending while workflow files are temporarily excluded from the published tree.
 
 ## API documentation
 
@@ -109,9 +110,21 @@ The API configures Swagger UI at `/docs` and its document at `/docs-json` outsid
 - Live meeting capture, transcription quality, real email and external-provider actions remain unverified or gated.
 - Export source selection, current content-purpose authorization, expiry configuration and final download bindings are incomplete.
 - Complete API/worker composition, recovery validation and retention policies remain outstanding.
-- Hosted CI is deliberately excluded on this source-publication branch. Skipped CI is not passed CI; main and its protections are unchanged.
+- Hosted CI and database-backed acceptance remain pending.
 
-See [remaining work](docs/STATUS.md) for the source/runtime distinction.
+Export request persistence still needs immutable source selections, current-purpose authorization, explicit expiry inputs and atomic final download auditing. Export generation needs an authorized resolver for encrypted transcript/item references. Analysis approval snapshots, durable reset-delivery recovery, remaining API/worker bindings and full Phase 7 acceptance require further work.
+
+The product-license activation implementation and key-path configuration have been removed. The historical `License` model, enums and migration sources remain to preserve existing-data upgrade compatibility. No destructive migration is included.
+
+The dependency audit reported 18 moderate and two low affected packages, with zero high or critical findings. It exited nonzero. These findings include tooling dependency chains and Nodemailer address parsing and remain open.
+
+## Development infrastructure
+
+`deployment/docker/` and `docker-compose.dev.yml` provide development containers. Their commands include database services, client generation and migrations and require separate operator authorization before use. They were inspected as source and have not been executed for this snapshot.
+
+`deploy/s1/` contains a pinned, test-only Vexa/STT preparation toolkit and local safety tests. Its lockfile describes immutable artifact inputs. The toolkit can perform downloads and infrastructure operations when explicitly invoked, so inspect its command and target safeguards before use. Public source contains no host identity, meeting URLs or credentials. Live Vexa and transcription acceptance remain gated.
+
+Internal documentation, agent tooling, and workflow definitions are maintained locally and temporarily excluded from the public tree. This README contains the public development and implementation-status information.
 
 ## License
 

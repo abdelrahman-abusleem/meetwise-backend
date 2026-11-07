@@ -40,6 +40,8 @@ Thumbs.db
 /.claude/
 /agents/
 /rules/
+/docs/
+/.github/workflows/
 /skills/
 /_codex_handoff*/
 /AGENTS.md

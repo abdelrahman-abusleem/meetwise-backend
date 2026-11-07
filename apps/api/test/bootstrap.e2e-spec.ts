@@ -36,10 +36,6 @@ describe('First OWNER bootstrap (owned PostgreSQL)', () => {
   };
   beforeAll(async () => {
     await prepareSessionDatabase();
-    process.env.LICENSE_PUBLIC_KEY_PATH = path.resolve(
-      __dirname,
-      'nonexistent-license-key.pem',
-    );
     const module = await Test.createTestingModule({
       imports: [ApiModule],
     }).compile();
@@ -268,6 +264,10 @@ describe('First OWNER bootstrap (owned PostgreSQL)', () => {
       .send(body())
       .expect(403);
     await request(server).get('/system/license/status').expect(404);
+    await request(server)
+      .post('/system/license/activate')
+      .send({ licenseKey: 'retired-synthetic-key' })
+      .expect(404);
     await complete(token).expect(201);
   });
   it('keeps stdout token-only with an environment file and generic on connection failure', () => {

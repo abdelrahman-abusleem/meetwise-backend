@@ -52,10 +52,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
-  LICENSE_PUBLIC_KEY_PATH = 'deployment/license/license-public.pem';
-
-  @IsString()
-  @IsNotEmpty()
   @MinLength(32)
   JWT_ACCESS_SECRET!: string;
 

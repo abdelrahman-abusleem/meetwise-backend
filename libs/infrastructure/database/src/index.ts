@@ -4,8 +4,6 @@ export * from './prisma.service';
 export {
   Prisma,
   SystemRole,
-  LicenseEdition,
-  LicenseStatus,
   DepartmentKind,
   DepartmentStatus,
   DepartmentRole,
