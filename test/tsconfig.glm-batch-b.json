@@ -1,0 +1,30 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "incremental": false,
+    "rootDir": "..",
+    "outDir": "../dist-glm-batch-b"
+  },
+  "include": [
+    "../libs/meetings/src/domain/notification-delivery.policy.ts",
+    "../libs/meetings/src/domain/notification-delivery-recovery.policy.ts",
+    "../libs/meetings/src/domain/outbox-dispatch.policy.ts",
+    "../libs/meetings/src/application/notification-delivery.service.ts",
+    "../libs/meetings/src/application/notification-delivery.repository.ts",
+    "../libs/meetings/src/application/notification-delivery-queue.port.ts",
+    "../libs/meetings/src/application/notification-delivery-provider.port.ts",
+    "../libs/meetings/src/application/notification-delivery-recovery.service.ts",
+    "../libs/meetings/src/application/outbox-dispatch.service.ts",
+    "../libs/meetings/src/application/outbox-dispatch.repository.ts",
+    "../libs/meetings/src/application/outbox-publish.port.ts",
+    "../libs/meetings/src/infrastructure/notification/nodemailer-smtp-delivery-provider.ts",
+    "../libs/meetings/src/infrastructure/notification/bullmq-notification-retry-scheduler.ts",
+    "../libs/meetings/src/infrastructure/notification/notification-delivery-worker.ts",
+    "../libs/meetings/src/infrastructure/outbox/bullmq-outbox-dispatch-publisher.ts",
+    "../libs/meetings/src/infrastructure/queue/queue-job-id.ts",
+    "../libs/meetings/src/infrastructure/notification/notification-delivery-core.ts"
+  ]
+}

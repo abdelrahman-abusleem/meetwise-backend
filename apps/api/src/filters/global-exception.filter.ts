@@ -60,12 +60,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     const requestId = request.requestId;
     const path = request.path;
-    const stack = exception instanceof Error ? exception.stack : undefined;
 
     if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(
         `[${requestId ?? 'unknown'}] ${request.method} ${path} - ${statusCode}`,
-        stack,
       );
     }
 

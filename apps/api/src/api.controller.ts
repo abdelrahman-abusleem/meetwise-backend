@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiService } from './api.service';
 import { SystemQueueService } from './services/system-queue.service';
 
@@ -14,7 +14,6 @@ export class ApiController {
     return this.apiService.getHello();
   }
 
-  @Post('system/smoke-test')
   async enqueueSmokeTest(): Promise<{ jobId: string }> {
     const jobId = await this.systemQueueService.enqueueSmokeTest();
 

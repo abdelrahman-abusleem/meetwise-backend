@@ -19,11 +19,8 @@ export class RedisHealthIndicator {
       await this.redisService.getClient().ping();
 
       return indicator.up();
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : 'Redis check failed';
-
-      return indicator.down({ message });
+    } catch {
+      return indicator.down({ message: 'Redis unavailable' });
     }
   }
 }

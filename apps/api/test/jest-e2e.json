@@ -1,9 +1,32 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": ".",
+  "rootDir": "../../..",
+  "roots": ["<rootDir>/apps/api/test"],
   "testEnvironment": "node",
-  "testRegex": ".e2e-spec.ts$",
+  "testRegex": "\\.e2e-spec\\.ts$",
+  "testTimeout": 15000,
+  "setupFiles": ["<rootDir>/test/setup-e2e-environment.cjs"],
+  "moduleNameMapper": {
+    "^@meetwise/infrastructure/config(|/.*)$": "<rootDir>/libs/infrastructure/config/src/$1",
+    "^@meetwise/infrastructure/database(|/.*)$": "<rootDir>/libs/infrastructure/database/src/$1",
+    "^@meetwise/infrastructure/health(|/.*)$": "<rootDir>/libs/infrastructure/health/src/$1",
+    "^@meetwise/infrastructure/queue(|/.*)$": "<rootDir>/libs/infrastructure/queue/src/$1",
+    "^@meetwise/infrastructure/redis(|/.*)$": "<rootDir>/libs/infrastructure/redis/src/$1",
+    "^@meetwise/infrastructure/mail(|/.*)$": "<rootDir>/libs/infrastructure/mail/src/$1",
+    "^@meetwise/security(|/.*)$": "<rootDir>/libs/security/src/$1"
+  },
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
-  }
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      {
+        "tsconfig": {
+          "module": "CommonJS",
+          "moduleResolution": "Node",
+          "allowJs": true,
+          "resolvePackageJsonExports": false
+        }
+      }
+    ]
+  },
+  "transformIgnorePatterns": ["/node_modules/(?!@nestjs/jwt/)"]
 }

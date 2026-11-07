@@ -19,11 +19,8 @@ export class DatabaseHealthIndicator {
       await this.prismaService.$queryRaw`SELECT 1`;
 
       return indicator.up();
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : 'Database check failed';
-
-      return indicator.down({ message });
+    } catch {
+      return indicator.down({ message: 'Database unavailable' });
     }
   }
 }

@@ -33,7 +33,11 @@
       "@meetwise/infrastructure/queue": ["libs/infrastructure/queue/src"],
       "@meetwise/infrastructure/queue/*": ["libs/infrastructure/queue/src/*"],
       "@meetwise/infrastructure/redis": ["libs/infrastructure/redis/src"],
-      "@meetwise/infrastructure/redis/*": ["libs/infrastructure/redis/src/*"]
+      "@meetwise/infrastructure/redis/*": ["libs/infrastructure/redis/src/*"],
+      "@meetwise/infrastructure/mail": ["libs/infrastructure/mail/src"],
+      "@meetwise/infrastructure/mail/*": ["libs/infrastructure/mail/src/*"],
+      "@meetwise/security": ["libs/security/src"],
+      "@meetwise/security/*": ["libs/security/src/*"]
     }
   }
 }

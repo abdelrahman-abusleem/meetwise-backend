@@ -1,0 +1,33 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "incremental": false,
+    "rootDir": "..",
+    "outDir": "../dist-glm-batch-a"
+  },
+  "include": [
+    "../libs/external-actions/src/domain/external-execution.policy.ts",
+    "../libs/meetings/src/application/duplicate-review.repository.ts",
+    "../libs/meetings/src/application/duplicate-review.service.ts",
+    "../libs/meetings/src/application/meeting-assignment.repository.ts",
+    "../libs/meetings/src/application/meeting-assignment.service.ts",
+    "../libs/meetings/src/application/meeting-transfer.repository.ts",
+    "../libs/meetings/src/application/meeting-transfer.service.ts",
+    "../libs/meetings/src/application/notification.repository.ts",
+    "../libs/meetings/src/application/notification.service.ts",
+    "../libs/meetings/src/domain/analysis-review.policy.ts",
+    "../libs/meetings/src/domain/analysis-run.policy.ts",
+    "../libs/meetings/src/domain/approve-remaining.policy.ts",
+    "../libs/meetings/src/domain/duplicate-candidate-review.policy.ts",
+    "../libs/meetings/src/domain/export-request.policy.ts",
+    "../libs/meetings/src/domain/management-transfer.policy.ts",
+    "../libs/meetings/src/domain/meeting-assignment.policy.ts",
+    "../libs/meetings/src/domain/notification-create.policy.ts",
+    "../libs/meetings/src/domain/transcript-ingest.policy.ts",
+    "../libs/meetings/src/application/analysis-run.repository.ts",
+    "../libs/meetings/src/application/analysis-run.service.ts"
+  ]
+}

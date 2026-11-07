@@ -5,10 +5,10 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root123
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a new private development database password}
       POSTGRES_DB: meetwise
     ports:
-      - '6000:5432'
+      - '127.0.0.1:6000:5432'
     volumes:
       - meetwise_postgres_data:/var/lib/postgresql/data
     networks:
@@ -24,7 +24,7 @@ services:
     container_name: meetwise-redis
     restart: unless-stopped
     ports:
-      - '6379:6379'
+      - '127.0.0.1:6379:6379'
     volumes:
       - meetwise_redis_data:/data
     networks:
@@ -44,7 +44,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://postgres:root123@postgres:5432/meetwise?schema=public
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?Set a new private development database password}@postgres:5432/meetwise?schema=public
       REDIS_HOST: redis
       REDIS_PORT: 6379
       PORT: 3000
@@ -62,7 +62,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: sh -c "npx prisma generate && npm run start:dev"
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run start:dev"
     healthcheck:
       test:
         [
@@ -85,7 +85,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://postgres:root123@postgres:5432/meetwise?schema=public
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?Set a new private development database password}@postgres:5432/meetwise?schema=public
       REDIS_HOST: redis
       REDIS_PORT: 6379
       WATCHPACK_POLLING: 'true'
@@ -100,7 +100,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: sh -c "npx prisma generate && npm run start:worker:dev"
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run start:worker:dev"
 
 volumes:
   meetwise_postgres_data:

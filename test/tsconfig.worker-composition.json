@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "incremental": false,
+    "rootDir": "..",
+    "outDir": "../dist-worker-composition"
+  },
+  "include": [
+    "../libs/meetings/src/infrastructure/nest/worker-composition.module.ts"
+  ]
+}
