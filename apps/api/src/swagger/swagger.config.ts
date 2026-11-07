@@ -1,8 +1,13 @@
 import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NodeEnvironment } from '@meetwise/infrastructure/config';
 
-export function configureSwagger(app: INestApplication): void {
-  if (process.env.NODE_ENV === 'production') {
+export function configureSwagger(
+  app: INestApplication,
+  configService: ConfigService,
+): void {
+  if (configService.get('NODE_ENV') === NodeEnvironment.PRODUCTION) {
     return;
   }
 

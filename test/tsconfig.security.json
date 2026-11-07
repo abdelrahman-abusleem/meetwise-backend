@@ -1,0 +1,35 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "../libs/meetings/src/**/*.ts",
+    "../apps/api/test/meeting-create.e2e-spec.ts",
+    "../apps/api/test/system-roles.e2e-spec.ts",
+    "../apps/api/src/modules/auth/guards/system-roles.guard.spec.ts",
+    "../apps/api/test/bootstrap.e2e-spec.ts",
+    "../libs/infrastructure/health/src/health.controller.spec.ts",
+    "../apps/api/src/types/express.d.ts",
+    "../apps/api/test/auth-http-families.e2e-spec.ts",
+    "../libs/security/src/password-reset-token.service.spec.ts",
+    "../libs/security/test/**/*.ts",
+    "../libs/infrastructure/queue/test/**/*.ts",
+    "../libs/infrastructure/queue/src/**/*.spec.ts",
+    "../apps/api/test/auth-session-families.e2e-spec.ts",
+    "../test/fixtures/auth-session-database.ts",
+    "../apps/api/src/modules/auth/services/refresh-token-hasher.service.spec.ts",
+    "../apps/api/test/bot-display.e2e-spec.ts",
+    "../apps/api/test/departments.e2e-spec.ts",
+    "../apps/worker/src/processors/auth.processor.spec.ts",
+    "../apps/api/test/owner-recovery.e2e-spec.ts",
+    "../apps/recovery/src/owner-recovery-credential.spec.ts",
+    "../apps/recovery/src/recovery-input.spec.ts",
+    "../libs/infrastructure/mail/src/mail.service.spec.ts",
+    "../libs/infrastructure/redis/src/redis.service.spec.ts",
+    "../apps/api/src/filters/global-exception.filter.spec.ts",
+    "../apps/api/src/modules/auth/services/auth-session.service.spec.ts",
+    "../libs/security/src/password-reset-logging.spec.ts"
+  ]
+}

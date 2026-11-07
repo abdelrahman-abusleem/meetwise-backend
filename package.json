@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "npm run build:api && npm run build:worker",
+    "build": "npm run build:api && npm run build:worker && npm run build:bootstrap && npm run build:recovery",
     "build:api": "nest build api",
     "build:worker": "nest build worker",
     "format": "prettier --write \"apps/**/*.ts\"",
@@ -19,28 +19,64 @@
     "start:prod": "node dist/apps/api/main",
     "start:prod:api": "node dist/apps/api/main",
     "start:prod:worker": "node dist/apps/worker/main",
-    "lint": "eslint \"apps/**/*.ts\" --fix",
+    "lint": "eslint \"apps/**/*.ts\" \"libs/**/*.ts\" --no-fix",
+    "lint:fix": "eslint \"apps/**/*.ts\" \"libs/**/*.ts\" --fix",
+    "typecheck": "npm run typecheck:api && npm run typecheck:worker && npm run typecheck:security && npm run typecheck:bootstrap && npm run typecheck:recovery",
+    "typecheck:api": "tsc -p apps/api/tsconfig.app.json --noEmit",
+    "typecheck:worker": "tsc -p apps/worker/tsconfig.app.json --noEmit",
+    "typecheck:security": "tsc -p test/tsconfig.security.json --noEmit",
     "test": "jest",
+    "test:meetings": "node --require ./test/register-meeting-tests.cjs --test test/domain/meeting-scope.policy.test.cjs test/domain/meeting-creation.policy.test.cjs test/domain/scheduled-join-eligibility.policy.test.cjs test/domain/meeting-create-api.test.cjs test/domain/meeting-create-service.test.cjs libs/meetings/test/domain/meeting-visibility.policy.test.cjs libs/meetings/test/domain/cancellation-request.policy.test.cjs libs/meetings/test/domain/meeting-lifecycle.policy.test.cjs test/domain/cancellation-decision-outbox.test.cjs test/domain/membership-expiry.test.cjs test/domain/authority-completion.test.cjs libs/meetings/test/application/export-json-csv-renderer.test.cjs libs/meetings/test/infrastructure/local-export-object-store.test.cjs test/domain/export-adapters-boundary.test.cjs test/domain/export-artifact-composition.test.cjs libs/external-actions/test/domain/external-execution.policy.test.cjs libs/meetings/test/application/duplicate-review.service.test.cjs libs/meetings/test/application/meeting-assignment.service.test.cjs libs/meetings/test/application/meeting-transfer.service.test.cjs libs/meetings/test/application/notification.service.test.cjs libs/meetings/test/domain/analysis-review.policy.test.cjs libs/meetings/test/domain/analysis-run.policy.test.cjs libs/meetings/test/domain/approve-remaining.policy.test.cjs libs/meetings/test/domain/duplicate-candidate-review.policy.test.cjs libs/meetings/test/domain/export-request.policy.test.cjs libs/meetings/test/domain/management-transfer.policy.test.cjs libs/meetings/test/domain/meeting-assignment.policy.test.cjs libs/meetings/test/domain/notification-create.policy.test.cjs libs/meetings/test/domain/transcript-ingest.policy.test.cjs test/domain/glm-review-corrections.test.cjs libs/meetings/test/application/analysis-run.service.test.cjs libs/meetings/test/application/notification-delivery.service.test.cjs libs/meetings/test/application/notification-delivery-recovery.service.test.cjs libs/meetings/test/application/outbox-dispatch.service.test.cjs libs/meetings/test/infrastructure/bullmq-outbox-dispatch-publisher.test.cjs test/domain/notification-adapter-boundaries.test.cjs test/domain/notification-core-composition.test.cjs libs/meetings/test/application/export-request.service.test.cjs libs/meetings/test/application/export-generation.service.test.cjs libs/external-actions/test/application/external-execution.service.test.cjs libs/meetings/test/application/bot-join.service.test.cjs libs/meetings/test/application/capture-session.service.test.cjs libs/meetings/test/application/meeting-lifecycle.service.test.cjs libs/meetings/test/application/transcript-ingest.service.test.cjs libs/meetings/test/domain/bot-join-eligibility.policy.test.cjs libs/meetings/test/domain/capture-session.policy.test.cjs test/domain/capture-verification.test.cjs test/domain/bot-retrigger-authority.test.cjs test/domain/committed-boundaries.test.cjs test/domain/worker-module-composition.test.cjs test/domain/execution-dispatch-fence.test.cjs test/domain/unknown-attempt-binding.test.cjs test/domain/persistence-foundation-source.test.cjs test/domain/outbox-postgres-offline.test.cjs test/domain/notification-postgres-offline.test.cjs test/domain/transcript-schema-source.test.cjs libs/meetings/test/application/transcript-envelope.test.cjs libs/meetings/test/application/transcript-file-keys.test.cjs test/domain/transcript-consumer-offline.test.cjs test/domain/transcript-consumer-write.test.cjs test/domain/analysis-run-schema-source.test.cjs test/domain/analysis-item-schema-source.test.cjs test/domain/export-schema-source.test.cjs",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/api/test/jest-e2e.json"
+    "test:e2e": "node test/run-e2e.cjs",
+    "test:integration": "npm run test:integration:security",
+    "test:integration:security": "node test/run-security-integration.cjs",
+    "test:security": "npm run test:security:proxy && npm run test:security:templates && npm run test:security:parsers && npm run test:security:tooling && npm run test:security:yaml-uri && npm run test:security:prisma",
+    "test:security:proxy": "node --test test/security/proxy-advisory.test.cjs",
+    "test:security:templates": "node --test test/security/handlebars-advisory.test.cjs",
+    "test:security:parsers": "node --test test/security/parser-advisory.test.cjs test/security/parser-teardown.test.cjs",
+    "test:security:tooling": "node --test test/security/tooling-advisory.test.cjs",
+    "test:security:yaml-uri": "node --test test/security/yaml-uri-advisory.test.cjs",
+    "test:security:prisma": "node --test test/security/prisma-advisory.test.cjs",
+    "build:bootstrap": "nest build bootstrap",
+    "typecheck:bootstrap": "tsc -p apps/bootstrap/tsconfig.app.json --noEmit",
+    "setup:token": "node dist/apps/bootstrap/main.js",
+    "build:recovery": "nest build recovery",
+    "typecheck:recovery": "tsc -p apps/recovery/tsconfig.app.json --noEmit",
+    "owner:recovery": "node dist/apps/recovery/main.js",
+    "typecheck:export-adapters": "tsc -p test/tsconfig.export-adapters.json --noEmit",
+    "typecheck:glm-batch-a": "tsc -p test/tsconfig.glm-batch-a.json --noEmit",
+    "typecheck:glm-batch-b": "tsc -p test/tsconfig.glm-batch-b.json --noEmit",
+    "typecheck:glm-batch-c": "tsc -p test/tsconfig.glm-batch-c.json --noEmit",
+    "typecheck:glm-batch-d": "tsc -p test/tsconfig.glm-batch-d.json --noEmit",
+    "typecheck:worker-composition": "tsc -p test/tsconfig.worker-composition.json --noEmit",
+    "schema:validate:offline": "prisma validate --config ./prisma.offline.config.ts",
+    "test:persistence:offline": "node --require ./test/register-meeting-tests.cjs --test test/domain/persistence-foundation-source.test.cjs",
+    "typecheck:outbox-postgres": "tsc -p test/tsconfig.outbox-postgres.json --noEmit",
+    "typecheck:notification-postgres": "tsc -p test/tsconfig.notification-postgres.json --noEmit",
+    "typecheck:transcript-consumer": "tsc -p test/tsconfig.transcript-consumer.json --noEmit"
   },
   "dependencies": {
     "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
-    "@nestjs/platform-express": "^11.0.1",
-    "@nestjs/swagger": "^11.4.5",
+    "@nestjs/jwt": "^12.0.2",
+    "@nestjs/platform-express": "11.2.6",
+    "@nestjs/swagger": "11.4.5",
     "@nestjs/terminus": "^11.1.1",
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "argon2": "^0.45.1",
     "bullmq": "^5.80.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "ioredis": "^5.11.1",
+    "nodemailer": "^10.0.15",
     "pg": "^8.22.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
@@ -51,9 +87,11 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
+    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/pg": "^8.20.0",
     "@types/supertest": "^7.0.0",
     "eslint": "^9.18.0",
@@ -62,7 +100,7 @@
     "globals": "^17.0.0",
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
-    "prisma": "^7.8.0",
+    "prisma": "7.10.1",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
@@ -93,12 +131,27 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@meetwise/config(|/.*)$": "<rootDir>/libs/config/src/$1",
-      "^@meetwise/database(|/.*)$": "<rootDir>/libs/database/src/$1",
-      "^@meetwise/health(|/.*)$": "<rootDir>/libs/health/src/$1",
       "^@meetwise/infrastructure/config(|/.*)$": "<rootDir>/libs/infrastructure/config/src/$1",
-      "^@meetwise/queue(|/.*)$": "<rootDir>/libs/queue/src/$1",
-      "^@meetwise/redis(|/.*)$": "<rootDir>/libs/redis/src/$1"
+      "^@meetwise/infrastructure/database(|/.*)$": "<rootDir>/libs/infrastructure/database/src/$1",
+      "^@meetwise/infrastructure/health(|/.*)$": "<rootDir>/libs/infrastructure/health/src/$1",
+      "^@meetwise/infrastructure/queue(|/.*)$": "<rootDir>/libs/infrastructure/queue/src/$1",
+      "^@meetwise/infrastructure/redis(|/.*)$": "<rootDir>/libs/infrastructure/redis/src/$1",
+      "^@meetwise/infrastructure/mail(|/.*)$": "<rootDir>/libs/infrastructure/mail/src/$1",
+      "^@meetwise/security(|/.*)$": "<rootDir>/libs/security/src/$1"
+    },
+    "setupFiles": [
+      "<rootDir>/test/setup-test-environment.cjs"
+    ]
+  },
+  "overrides": {
+    "@nestjs/swagger@11.4.5": {
+      "js-yaml": "4.3.2"
+    },
+    "@nestjs/platform-express@11.2.6": {
+      "multer": "2.5.0",
+      "express": {
+        "body-parser": "2.4.0"
+      }
     }
   }
 }

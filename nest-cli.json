@@ -19,14 +19,14 @@
         "tsConfigPath": "apps/api/tsconfig.app.json"
       }
     },
-  "infrastructure-health": {
-  "type": "library",
-  "root": "libs/infrastructure/health",
-  "entryFile": "index",
-  "sourceRoot": "libs/infrastructure/health/src",
-  "compilerOptions": {
-    "tsConfigPath": "libs/infrastructure/health/tsconfig.lib.json"
-                     }
+    "infrastructure-health": {
+      "type": "library",
+      "root": "libs/infrastructure/health",
+      "entryFile": "index",
+      "sourceRoot": "libs/infrastructure/health/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/infrastructure/health/tsconfig.lib.json"
+      }
     },
     "infrastructure-config": {
       "type": "library",
@@ -71,6 +71,42 @@
       "sourceRoot": "apps/worker/src",
       "compilerOptions": {
         "tsConfigPath": "apps/worker/tsconfig.app.json"
+      }
+    },
+    "security": {
+      "root": "libs/security",
+      "sourceRoot": "libs/security/src",
+      "entryFile": "index",
+      "type": "library",
+      "compilerOptions": {
+        "tsConfigPath": "libs/security/tsconfig.lib.json"
+      }
+    },
+    "infrastructure-mail": {
+      "root": "libs/infrastructure/mail",
+      "sourceRoot": "libs/infrastructure/mail/src",
+      "entryFile": "index",
+      "type": "library",
+      "compilerOptions": {
+        "tsConfigPath": "libs/infrastructure/mail/tsconfig.lib.json"
+      }
+    },
+    "bootstrap": {
+      "type": "application",
+      "root": "apps/bootstrap",
+      "entryFile": "main",
+      "sourceRoot": "apps/bootstrap/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/bootstrap/tsconfig.app.json"
+      }
+    },
+    "recovery": {
+      "type": "application",
+      "root": "apps/recovery",
+      "entryFile": "main",
+      "sourceRoot": "apps/recovery/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/recovery/tsconfig.app.json"
       }
     }
   }

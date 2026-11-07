@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "incremental": false,
+    "rootDir": "..",
+    "outDir": "../dist-transcript-consumer"
+  },
+  "include": [
+    "../libs/meetings/src/infrastructure/transcript-*.ts",
+    "../apps/worker/src/processors/transcript*.ts"
+  ],
+  "exclude": ["../apps/worker/src/processors/*.spec.ts"]
+}

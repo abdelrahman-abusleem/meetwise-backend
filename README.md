@@ -1,98 +1,118 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# MeetWise Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+MeetWise is a self-hosted meeting-to-action backend for a single organization. It brings meeting records, transcript provenance, structured analysis, human review and destination-specific actions into one scoped workflow.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+**Current status: reviewed backend source with offline validation.** This branch is a source-only publication, not a deployment or a completed end-to-end product. Database, Redis, email, live meeting capture and provider integrations have not been verified for this published snapshot.
 
-## Description
+## What it solves
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Meeting notes lose context when they become tasks or sales follow-ups. MeetWise keeps source evidence, revision history and approval boundaries attached to proposed actions. Transcript and model output remain untrusted; administrative access does not automatically grant private-content access or permission to execute an external action.
 
-## Project setup
+## Implemented source capabilities
 
-```bash
-$ npm install
+| Area                    | Source scope                                                                                                                                                                              |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup and identity      | First-owner bootstrap, license-independent setup, canonical system and department roles, scoped memberships and configuration boundaries.                                                 |
+| Authentication          | Per-device refresh-session families, token rotation, replay revocation, logout, password-reset protections and a separate owner-recovery CLI.                                             |
+| Meetings                | Scoped creation, metadata access, cancellation and lifecycle policies, assignment and transfer rules.                                                                                     |
+| Capture and evidence    | Scheduling/capture policies, encrypted transcript envelopes, revision membership, ingestion receipts and evidence-source constraints.                                                     |
+| Analysis and review     | Analysis-run state and repair limits, item review/approval policies and prepared item/evidence persistence sources.                                                                       |
+| Asynchronous processing | Outbox and notification repositories, delivery/recovery policies, queue-facing adapters and controlled composition tests.                                                                 |
+| External actions        | Destination-scoped execution identities, attempt/lease fencing and unknown-effect reconciliation policies.                                                                                |
+| Export                  | JSON/CSV rendering, private local-object storage, export request/download-audit schema sources and settled-state guards. Full source selection and authorization bindings remain pending. |
+
+These capabilities have different integration depths. Much of the meeting-to-action pipeline is library/application source rather than registered API routes or active worker consumers. See [implementation status](docs/STATUS.md).
+
+## Technology
+
+- Node.js 24 and TypeScript 5.9.
+- NestJS 11 API, worker and command-line applications.
+- Prisma 7.10.1 with PostgreSQL schema and migration sources.
+- BullMQ 5 and ioredis for queue infrastructure.
+- Cookie-based JWT authentication, Argon2 password hashing and validated DTOs.
+- Nodemailer transport source, with real delivery unverified.
+- Jest, Node's test runner and Python offline tooling.
+
+The lockfile is authoritative for dependency versions. No paid provider or hosted service is required to inspect the code or run the pure offline test suites.
+
+## Architecture
+
+HTTP controllers handle transport concerns; application services coordinate use cases; domain policies hold state and authorization invariants. Infrastructure adapters implement persistence, queue, storage and provider boundaries through explicit contracts.
+
+PostgreSQL is the intended source of truth. Outbox publication and queue delivery are at least once, so consumers need durable receipts and reconciliation. Provider calls must stay outside short database transactions. See [architecture](docs/ARCHITECTURE.md).
+
+```text
+apps/api/          HTTP API and feature modules
+apps/worker/       Worker entry point and processors
+apps/bootstrap/    First-owner bootstrap CLI
+apps/recovery/     Owner-recovery CLI
+libs/meetings/     Meeting, transcript, analysis, notification and export logic
+libs/external-actions/  Execution policies and application services
+libs/security/     Shared security controls
+libs/infrastructure/  Configuration, database, Redis, health and queue support
+prisma/            Schema and immutable migration sources
+contracts/         Proposed and implemented API contract sections
+test/              Offline, security, integration and E2E test infrastructure
+scripts/           Contract validation and transcription-quality utilities
 ```
 
-## Compile and run the project
+## Local development
+
+Use Node.js 24 and npm. PostgreSQL and Redis are required for an actual API/worker runtime. Python 3 is needed for the optional contract and transcription-quality tools.
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/abdelrahman-abusleem/meetwise-backend.git
+cd meetwise-backend
+git checkout codex/source-publication-20261104
+npm ci --ignore-scripts
 ```
 
-## Run tests
+The installation command matches the repository workflow; a fresh dependency installation was not performed for this publication. Native dependencies may require platform-specific setup.
+
+Copy `.env.example` to a private local `.env` and replace every placeholder. Use separate random access-token, refresh-token and password-reset secrets. Never commit credentials, private keys or database dumps.
+
+Prisma uses `prisma.config.ts` for its datasource configuration. Generated client files are intentionally untracked. The publication checks used an existing local client; clean-clone client generation and database initialization remain prerequisites for runtime development and were not executed here. Do not apply migration sources blindly to an existing installation.
+
+After those runtime prerequisites are prepared in an authorized environment:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run start:dev
+npm run start:worker:dev
 ```
 
-## Deployment
+First-owner setup and owner recovery have separate CLI entry points, `npm run setup:token` and `npm run owner:recovery`. They require their built applications, configured database and explicit operator authorization; they are not offline smoke commands.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Offline validation
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run test:meetings
+npm test -- --runInBand --no-cache
+npm run test:security
+npm run typecheck
+npm run lint
+npm run schema:validate:offline
+npm run build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Additional strict feature typechecks are listed in `package.json`. Builds require an available compatible generated client. The schema-validation command uses a separate configuration without a datasource, environment loading or generation hooks.
 
-## Resources
+`npm run test:integration` and `npm run test:e2e` require explicitly prepared disposable infrastructure. They are not part of the source-only publication run and must not target production or shared data. See [development and testing](docs/DEVELOPMENT.md).
 
-Check out a few resources that may come in handy when working with NestJS:
+## API documentation
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+The API configures Swagger UI at `/docs` and its document at `/docs-json` outside production mode. An actual running, configured API is required. `contracts/openapi.yaml` also contains proposed sections; a documented path is not proof that the complete feature is registered or operational.
 
-## Support
+## Limitations and publication policy
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- No current database-backed or end-to-end runtime verification is claimed.
+- Migration SQL is prepared source, not evidence of applied migrations.
+- Live meeting capture, transcription quality, real email and external-provider actions remain unverified or gated.
+- Export source selection, current content-purpose authorization, expiry configuration and final download bindings are incomplete.
+- Complete API/worker composition, recovery validation and retention policies remain outstanding.
+- Hosted CI is deliberately excluded on this source-publication branch. Skipped CI is not passed CI; main and its protections are unchanged.
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+See [remaining work](docs/STATUS.md) for the source/runtime distinction.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+No repository license file is included, and `package.json` is marked `UNLICENSED`. This snapshot does not claim an open-source license grant.

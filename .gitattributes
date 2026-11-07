@@ -1,0 +1,3 @@
+* text=auto eol=lf
+prisma/migrations/**/migration.sql text eol=lf
+prisma/migrations/20260712233709_create_system_settings/migration.sql text eol=crlf

@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "incremental": false,
+    "rootDir": "../libs/meetings/src",
+    "outDir": "../dist-export-adapters"
+  },
+  "include": [
+    "../libs/meetings/src/application/export-generator.port.ts",
+    "../libs/meetings/src/application/export-object-store.port.ts",
+    "../libs/meetings/src/application/export-json-csv-renderer.ts",
+    "../libs/meetings/src/infrastructure/export/local-export-object-store.ts",
+    "../libs/meetings/src/infrastructure/export/export-artifact-adapters.ts"
+  ]
+}

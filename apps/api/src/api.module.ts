@@ -15,6 +15,11 @@ import { ApiController } from './api.controller';
 import { ApiService } from './api.service';
 import { HttpLoggingMiddleware } from './middleware/http-logging.middleware';
 import { SystemQueueService } from './services/system-queue.service';
+import { SystemSettingsModule } from './modules/system-settings/system-settings.module';
+import { SetupModule } from './modules/setup/setup.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { DepartmentMembershipsModule } from './modules/departments/department-memberships.module';
+import { MeetingsModule } from './modules/meetings/meetings.module';
 
 @Module({
   imports: [
@@ -23,6 +28,11 @@ import { SystemQueueService } from './services/system-queue.service';
     RedisModule,
     QueueModule,
     HealthModule,
+    SystemSettingsModule,
+    SetupModule,
+    AuthModule,
+    DepartmentMembershipsModule,
+    MeetingsModule,
   ],
   controllers: [ApiController],
   providers: [ApiService, SystemQueueService],

@@ -1,0 +1,27 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "incremental": false,
+    "rootDir": "..",
+    "outDir": "../dist-glm-batch-d"
+  },
+  "include": [
+    "../libs/external-actions/src/application/execution-request.repository.ts",
+    "../libs/external-actions/src/application/external-execution-provider.port.ts",
+    "../libs/external-actions/src/application/external-execution.service.ts",
+    "../libs/meetings/src/application/bot-join-provider.port.ts",
+    "../libs/meetings/src/application/bot-join.repository.ts",
+    "../libs/meetings/src/application/bot-join.service.ts",
+    "../libs/meetings/src/application/capture-session.repository.ts",
+    "../libs/meetings/src/application/capture-session.service.ts",
+    "../libs/meetings/src/application/meeting-lifecycle.repository.ts",
+    "../libs/meetings/src/application/meeting-lifecycle.service.ts",
+    "../libs/meetings/src/application/transcript-ingest.repository.ts",
+    "../libs/meetings/src/application/transcript-ingest.service.ts",
+    "../libs/meetings/src/domain/bot-join-eligibility.policy.ts",
+    "../libs/meetings/src/domain/capture-session.policy.ts"
+  ]
+}

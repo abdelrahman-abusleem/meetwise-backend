@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "incremental": false,
+    "rootDir": "..",
+    "outDir": "../dist-outbox-postgres"
+  },
+  "include": [
+    "../libs/meetings/src/infrastructure/outbox/postgres-outbox-dispatch.repository.ts",
+    "../libs/meetings/src/application/outbox-dispatch.service.ts"
+  ]
+}

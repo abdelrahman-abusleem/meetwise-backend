@@ -1,8 +1,11 @@
-import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
+import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
 import { ConfigModule } from '@meetwise/infrastructure/config';
+
 import { QUEUE_NAMES } from './queue.constants';
+import { QueueProducerService } from './queue-producer.service';
 
 @Module({
   imports: [
@@ -18,10 +21,16 @@ import { QUEUE_NAMES } from './queue.constants';
       }),
     }),
 
-    BullModule.registerQueue({
-      name: QUEUE_NAMES.SYSTEM,
-    }),
+    BullModule.registerQueue(
+      {
+        name: QUEUE_NAMES.SYSTEM,
+      },
+      {
+        name: QUEUE_NAMES.AUTH,
+      },
+    ),
   ],
-  exports: [BullModule],
+  providers: [QueueProducerService],
+  exports: [BullModule, QueueProducerService],
 })
 export class QueueModule {}

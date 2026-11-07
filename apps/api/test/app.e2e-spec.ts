@@ -1,24 +1,48 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { ApiModule } from './../src/api.module';
+import type { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import type { Server } from 'node:http';
+import request from 'supertest';
 
-describe('ApiController (e2e)', () => {
-  let app: INestApplication;
+import { ApiModule } from '../src/api.module';
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+describe('API (e2e with disposable services)', () => {
+  let app: INestApplication | undefined;
+  let httpServer: Server;
+
+  beforeAll(async () => {
+    const moduleFixture = await Test.createTestingModule({
       imports: [ApiModule],
     }).compile();
-
     app = moduleFixture.createNestApplication();
     await app.init();
+    httpServer = app.getHttpServer() as Server;
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
+  afterAll(async () => {
+    await app?.close();
+  });
+
+  it('/health/live (GET)', async () => {
+    await request(httpServer)
+      .get('/health/live')
       .expect(200)
-      .expect('Hello World!');
+      .expect({ status: 'ok' });
+  });
+
+  it('/health/ready (GET) checks real PostgreSQL and Redis', async () => {
+    const dependencies = {
+      database: { status: 'up' },
+      redis: { status: 'up' },
+    };
+    await request(httpServer).get('/health/ready').expect(200).expect({
+      status: 'ok',
+      info: dependencies,
+      error: {},
+      details: dependencies,
+    });
+  });
+
+  it('returns 404 for an unknown route', async () => {
+    await request(httpServer).get('/not-a-meetwise-route').expect(404);
   });
 });

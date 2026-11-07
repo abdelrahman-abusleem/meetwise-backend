@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "incremental": false,
+    "rootDir": "..",
+    "outDir": "../dist-glm-batch-c"
+  },
+  "include": [
+    "../libs/meetings/src/domain/export-generation.policy.ts",
+    "../libs/meetings/src/application/export-request.service.ts",
+    "../libs/meetings/src/application/export-request.repository.ts",
+    "../libs/meetings/src/application/export-generation.service.ts",
+    "../libs/meetings/src/application/export-generation.repository.ts",
+    "../libs/meetings/src/infrastructure/export/export-generation-worker.ts",
+    "../libs/meetings/src/infrastructure/export/export-generation-core.ts"
+  ]
+}
