@@ -97,7 +97,7 @@ Additional strict feature typechecks are listed in `package.json`. Builds requir
 
 `node --test test/infrastructure/` runs local test-runner, contract and source-tree checks. Python offline tests can be run with `python -B -m unittest discover -s scripts -p 'test_s1_quality_*.py'` and `python -B -m unittest discover -s deploy/s1 -p test_toolkit.py`.
 
-`npm run test:integration` and `npm run test:e2e` require explicitly authorized disposable PostgreSQL/Redis fixtures. They remain pending for this source snapshot. GitHub Actions verification also remains pending while workflow files are temporarily excluded from the published tree.
+`npm run test:integration` and `npm run test:e2e` use disposable PostgreSQL and Redis fixtures. GitHub Actions runs these suites in isolated jobs, with loopback service bindings and synthetic test data.
 
 ## API documentation
 
@@ -124,7 +124,7 @@ The dependency audit reported 18 moderate and two low affected packages, with ze
 
 `deploy/s1/` contains a pinned, test-only Vexa/STT preparation toolkit and local safety tests. Its lockfile describes immutable artifact inputs. The toolkit can perform downloads and infrastructure operations when explicitly invoked, so inspect its command and target safeguards before use. Public source contains no host identity, meeting URLs or credentials. Live Vexa and transcription acceptance remain gated.
 
-Internal documentation, agent tooling, and workflow definitions are maintained locally and temporarily excluded from the public tree. This README contains the public development and implementation-status information.
+Internal documentation and agent tooling are maintained locally. The public workflow runs the six required checks for pull requests targeting main and for pushes to main.
 
 ## License
 

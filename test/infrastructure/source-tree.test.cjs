@@ -21,7 +21,6 @@ test('the published tree excludes product licensing and internal directories', (
     'apps/api/src/modules/license',
     'docs',
     'rules',
-    '.github/workflows',
     '.agents',
     '.codex',
     '.glm',
@@ -37,9 +36,9 @@ test('the published tree excludes product licensing and internal directories', (
   }
 });
 
-test('ignored local documentation and workflows cannot be accidentally added', () => {
+test('ignored local documentation cannot be accidentally added', () => {
   const entries = new Set(read('.gitignore').split(/\r?\n/));
-  for (const entry of ['/docs/', '/rules/', '/.github/workflows/']) {
+  for (const entry of ['/docs/', '/rules/']) {
     assert(entries.has(entry), entry);
   }
 });
